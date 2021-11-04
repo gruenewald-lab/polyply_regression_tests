@@ -1,0 +1,37 @@
+#!/bin/python3
+import os
+import argparse
+import logging
+from pathlib import Path
+from polyply_regression_tests import FF_PATH
+import polyply_regression_tests
+
+def main():
+    """
+    Write a topology file to the current working directory including
+    a specific force-field, itps and composition.
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-o', type=Path, dest="filename", help="name of the topology file")
+    parser.add_argument('-ff-file', type=str, dest="force_field", help="name of the force-field")
+    parser.add_argument('-ff-dir', type=str, dest="ff_dir", help="name of the force-field directory")
+    parser.add_argument('-itps', type=str, dest="itps", help="itp files, multiple", nargs='*')
+    parser.add_argument('-mols', type=str, nargs='*', dest='mols', help="molname:#mols")
+
+    args = parser.parse_args()
+
+    with open(args.filename, "w") as _file:
+        ff_path = os.path.join(polyply_regression_tests.__path__[0], FF_PATH, args.ff_dir, args.force_field)
+        _file.write("#include \"{ffpath}\"\n".format(ffpath=ff_path))
+        for itp in args.itps:
+            _file.write("#include \"{itpname}\"\n".format(itpname=itp))
+        _file.write("\n[ system ]\n")
+        _file.write("test \n")
+        _file.write("[ molecules ]\n")
+        for mol in args.mols:
+            name, number = mol.split(":")
+            _file.write("{} {}\n".format(name, number))
+
+if __name__ == '__main__':
+    main()

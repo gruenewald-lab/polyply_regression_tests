@@ -5,21 +5,10 @@ jobs:
     AMBER:
 
         strategy:
-            matrix:
-                residue: ["DG", "DA", "DT", "DG"]
+            residue: ["DG", "DA"]
 
         steps:
              run1: polyply gen_params -seq {residue}:1 -o test.itp -name test -lib parmbsc1
-             run2: polyply gen_coords -o test.gro -p {data_path}/template_gen/AMBER.top -name test -back_fudge=1
-             run3: satisfies_geometry -f test.gro -itp test.itp
-
-    2016H66:
-
-        strategy:
-            matrix:
-                residue: ["PS", "PE", "PP", "PMMA", "PMA", "PEO"]
-
-        steps:
-             run1: polyply gen_params -seq {residue}:1 -o test.itp -name test -lib 2016H66
-             run2: polyply gen_coords -o test.gro -p {data_path}/template_gen/2016H66.top -name test
-             run3: satisfies_geometry -f test.gro -itp test.itp
+             run2: setup_top_file -o test.top -ff-dir amber14sb_parmbsc1.ff -ff-file forcefield.itp -itps "test.itp" -mols test:1
+             run3: polyply gen_coords -o test.gro -p test.top -name test -back_fudge 1 -box 3. 3. 3.
+             run4: satisfy_geometry -c test.gro -p test.top -name test

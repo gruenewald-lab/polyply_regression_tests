@@ -12,11 +12,12 @@ def matches_geometry(block, coords, tolerances):
     for bond in itertools.chain(block.interactions["bonds"], block.interactions["constraints"]):
         ref = float(bond.parameters[1])
         dist = np.linalg.norm(coords[bond.atoms[0]] - coords[bond.atoms[1]])
-        assert np.isclose(dist, ref, atol=tolerances['bond'])
+        assert np.isclose(dist, ref, atol=tolerances['bonds'])
 
     for inter in block.interactions["angles"]:
         ref = float(inter.parameters[1])
         ang = angle(coords[inter.atoms[0]], coords[inter.atoms[1]], coords[inter.atoms[2]])
+        print(ref, ang)
         assert np.isclose(ang, ref, atol=tolerances['angles'])
 
     # only improper dihedrals

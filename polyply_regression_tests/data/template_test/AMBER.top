@@ -1,0 +1,11 @@
+; Include forcefield parameters
+#include "../force_fields/amber14sb_parmbsc1.ff/forcefield.itp"
+#include "test.itp"
+
+[ system ]
+; Name
+Protein in water
+
+[ molecules ]
+; Compound        #mols
+test                  1

@@ -1,12 +1,12 @@
 #!/bin/python3
-
+import os
 import argparse
 import logging
 from pathlib import Path
 from vermouth.log_helpers import (StyleAdapter, BipolarFormatter,
                                   CountingHandler, TypeAdapter,)
 
-from regression_tests.workflow_manager.compare_files import compare_itp, compare_pdb
+from polyply_regression_tests.workflow_utils.compare_files import compare_itp, compare_pdb
 
 COMPARERS = {'.itp': compare_itp,
              '.pdb': compare_pdb}
@@ -19,8 +19,8 @@ def main():
     """
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
-    parser.add_argument('-in', type=Path, dest=infile)
-    parser.add_argument('-ref', type=Path, dest=reffile)
+    parser.add_argument('-in', type=Path, dest="infile", help="name of the novel file")
+    parser.add_argument('-ref', type=Path, dest="reffile", help="name of the reference file")
 
     args = parser.parse_args()
 

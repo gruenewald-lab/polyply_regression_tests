@@ -1,10 +1,13 @@
 import os
 import itertools
+import tempfile
 import resource
 import subprocess
 import time
 from multiprocessing import Pool
 import yaml
+from .. import DATA_PATH
+import polyply_regression_tests
 
 class  DispatchError(Exception):
     """
@@ -28,7 +31,8 @@ def run_process(process, current_workdir):
     start_rusage = resource.getrusage(resource.RUSAGE_CHILDREN)
     start_time = time.time()
 
-    command = process.split(" ")
+    command = process.split()
+    print(command)
     output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=None)
 
     end_time = time.time()
@@ -46,31 +50,31 @@ def run_process(process, current_workdir):
 
 def pipe(processes):
     time_output = {}
-    for process in processes:
-
-        with tempfile.TemporaryDirectory() as tmp_dir:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        for process in processes:
             try:
 	            stdout, stderr, metrics = run_process(process,
-                                                  current_workdir=tmp_dir)
+                                                      current_workdir=tmp_dir)
             except DispatchError:
                 raise OSError
 
-            with open(process.sub_exe+"_time_statistic.dat", "w") as _file:
-                for metric, time in metrics.items():
-                    _file.write("{} {:3.6f}\n".format(metric, time))
+           #with open("_time_statistic.dat", "w") as _file:
+           #    for metric, time in metrics.items():
+           #        _file.write("{} {:3.6f}\n".format(metric, time))
 
     return 0
 
 
-def expand_job_matrix(strategy, steps, global_vars, job_vars):
+def expand_job_matrix(strategy, steps, global_vars, job_vars, data_path):
     variables = strategy.keys()
     variable_values = [ strategy[key] for key in variables]
     job_matrix = []
-    for tier_variables in itertools.product(variable_values):
+    for tier_variables in itertools.product(*variable_values):
         tier_dict = dict(zip(variables, tier_variables))
+        tier_dict["data_path"] = data_path
         tier_dict.update(global_vars)
         tier_dict.update(job_vars)
-        processes = [ step.format(**tier_dict) for step in steps]
+        processes = [ step.format(**tier_dict) for step in steps.values()]
         job_matrix.append(processes)
 
     return job_matrix
@@ -78,26 +82,22 @@ def expand_job_matrix(strategy, steps, global_vars, job_vars):
 class WorkflowManager:
 
     def __init__(self, **kwargs):
-        self.glob_vars = {}
-        self.jobs = []
-        self.name = None
-        self.data_dir = None
-        self.run_dir = None
-        for kwarg in kwargs:
-            if kwarg in self.__dict__:
-                self.__dict__[kwarg] = kwargs.pop(kwarg)
-
+        self.jobs = kwargs.pop("jobs")
+        self.name = kwargs.pop("name")
+        self.data_dir = os.path.join(polyply_regression_tests.__path__[0],
+                                     DATA_PATH, kwargs.pop("data_path"))
         self.glob_vars = kwargs
 
     def run_jobs(self, nproc):
-        for job in self.jobs:
+        for job in self.jobs.values():
             strategy = job.pop("strategy")
             steps = job.pop("steps")
             job_vars = job
             processes = expand_job_matrix(strategy,
                                           steps,
                                           self.glob_vars,
-                                          job_vars)
+                                          job_vars,
+                                          self.data_dir)
             pool = Pool(nproc)
             pool.map(pipe, processes)
 

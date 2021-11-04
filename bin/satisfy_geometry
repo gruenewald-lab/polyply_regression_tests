@@ -1,0 +1,38 @@
+#!/bin/python3
+import argparse
+import logging
+from pathlib import Path
+from vermouth.log_helpers import (StyleAdapter, BipolarFormatter,
+                                  CountingHandler, TypeAdapter,)
+from vermouth.gmx.gro import read_gro
+from vermouth.gmx.itp_read import read_itp
+from polyply_regression_tests.workflow_utils.matches_geometry import matches_geometry
+
+def main():
+    """
+    Compare two files and see if their content is practically
+    the same. Note it currently supports PDB files and itp
+    files.
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-f', type=Path, dest=itpfile)
+    parser.add_argument('-c', type=Path, dest=coordfile)
+    parser.add_argument('-name', type=str, dest=block_name)
+
+    args = parser.parse_args()
+
+    with open(args.itpfile, "r") as _file:
+        lines = _file.readlines()
+
+    ff = vermouth.forcefield.ForceField("ref")
+    read_itp(lines, ff)
+
+    molecule = read_gro(args.coordfile)
+    coords = nx.get_node_attributes(molecule, "positions")
+    matches_geometry(ff.blocks[args.block_name], coord)
+
+    return True
+
+if __name__ == '__main__':
+    main()

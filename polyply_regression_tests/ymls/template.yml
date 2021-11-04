@@ -1,0 +1,25 @@
+name: test_template_generation
+data_path: template_test
+
+jobs:
+    AMBER:
+
+        strategy:
+            matrix:
+                residue: ["DG", "DA", "DT", "DG"]
+
+        steps:
+             run1: polyply gen_params -seq {residue}:1 -o test.itp -name test -lib parmbsc1
+             run2: polyply gen_coords -o test.gro -p {data_path}/template_gen/AMBER.top -name test -back_fudge=1
+             run3: satisfies_geometry -f test.gro -itp test.itp
+
+    2016H66:
+
+        strategy:
+            matrix:
+                residue: ["PS", "PE", "PP", "PMMA", "PMA", "PEO"]
+
+        steps:
+             run1: polyply gen_params -seq {residue}:1 -o test.itp -name test -lib 2016H66
+             run2: polyply gen_coords -o test.gro -p {data_path}/template_gen/2016H66.top -name test
+             run3: satisfies_geometry -f test.gro -itp test.itp

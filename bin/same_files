@@ -1,0 +1,34 @@
+#!/bin/python3
+
+import argparse
+import logging
+from pathlib import Path
+from vermouth.log_helpers import (StyleAdapter, BipolarFormatter,
+                                  CountingHandler, TypeAdapter,)
+
+from regression_tests.workflow_manager.compare_files import compare_itp, compare_pdb
+
+COMPARERS = {'.itp': compare_itp,
+             '.pdb': compare_pdb}
+
+def main():
+    """
+    Compare two files and see if their content is practically
+    the same. Note it currently supports PDB files and itp
+    files.
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-in', type=Path, dest=infile)
+    parser.add_argument('-ref', type=Path, dest=reffile)
+
+    args = parser.parse_args()
+
+    ext = args.infile.suffix.lower()
+    if ext in COMPARERS:
+        COMPARERS[ext](str(args.reffile), str(args.infile))
+
+    return True
+
+if __name__ == '__main__':
+    main()

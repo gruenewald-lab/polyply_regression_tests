@@ -1,0 +1,33 @@
+#!/bin/python3
+
+import argparse
+import logging
+from pathlib import Path
+from vermouth.log_helpers import (StyleAdapter, BipolarFormatter,
+                                  CountingHandler, TypeAdapter,)
+
+from regression_tests.workflow_manager.read_time_file import read_time_file
+
+COMPARERS = {'.itp': compare_itp,
+             '.pdb': compare_pdb}
+
+def main():
+    """
+    Compare two files and see if their content is practically
+    the same. Note it currently supports PDB files and itp
+    files.
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-limit', type=float, dest=limit)
+    parser.add_argument('-type', type=str, dest=time_type)
+    parser.add_argument('-file', type=Path, dest=reffile)
+
+    args = parser.parse_args()
+    with open(args.time_file, "r") as _file:
+        lines = _file.readlines()
+    time_dict = read_time_file(lines)
+    assert time_dict[args.time_type] < limit
+
+if __name__ == '__main__':
+    main()

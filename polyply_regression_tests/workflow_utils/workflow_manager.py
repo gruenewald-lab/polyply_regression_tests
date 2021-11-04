@@ -100,6 +100,7 @@ class WorkflowManager:
                                           self.data_dir)
             pool = Pool(nproc)
             pool.map(pipe, processes)
+        return True
 
     @classmethod
     def from_ymal(cls, stream):

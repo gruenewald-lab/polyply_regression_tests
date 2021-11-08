@@ -1,0 +1,51 @@
+#!/bin/python3
+from collections import defaultdict
+import argparse
+from pathlib import Path
+import polyply_regression_tests
+
+def main():
+    """
+    Write a polyply build file to the current working directory.
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-o',      type=Path, dest="filename", help="name of the build file", default="build_file.bld")
+    parser.add_argument('-restr',  type=str,  dest="restr",    help="format mol:start:stop:string", nargs='*', default=[])
+    parser.add_argument('-cyl',    type=str,  dest="cyl",   help="format mol:start:stop:string", nargs='*', default=[])
+    parser.add_argument('-rect',   type=str,  dest="rect",     help="format mol:start:stop:string", nargs='*', default=[])
+    parser.add_argument('-sphere', type=str,  dest='sphere',   help="format mol:start:stop:string", nargs='*', default=[])
+    parser.add_argument('-lp', type=str,  dest='lp',   help="format mol:start:stop:string", nargs='*', default=[])
+    parser.add_argument('-rw', type=str,  dest='rw',   help="format mol:start:stop:string", nargs='*', default=[])
+
+    args = parser.parse_args()
+    directives = {"restr": ["distance_restraints"],
+                  "cyl":   ["geometry", "cylinder"],
+                  "rect":  ["geometry", "rectangle"],
+                  "sphere": ["geometry", "sphere"],
+                  "lp": ["persistence_length"],
+                  "rw": ["rw_options"]
+                 }
+
+    build_file_entries = defaultdict(lambda: defaultdict(list))
+    for directive in directives:
+        print(getattr(args, directive))
+        for entry in getattr(args, directive):
+            molname, start, stop, entry = entry.split(":")
+            build_file_entries[(molname, start, stop)][directive].append(entry)
+
+
+    with open(args.filename, "w") as _file:
+        for molname, start, stop in build_file_entries:
+            _file.write("[ molecule ]\n")
+            _file.write("{} {} {}\n".format(molname, start, stop))
+            for directive in build_file_entries[(molname, start, stop)]:
+                full_direct_name = directives[directive]
+                for header in full_direct_name:
+                    _file.write("[ {header} ]\n".format(**{"header": header}))
+                for entry in build_file_entries[(molname, start, stop)][directive]:
+                    entry = entry.replace("_", " ")
+                    _file.write(entry + "\n")
+
+if __name__ == '__main__':
+    main()

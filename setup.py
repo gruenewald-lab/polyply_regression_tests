@@ -40,7 +40,8 @@ def package_files(directory):
 setup(
     package_data={'': package_files('polyply_regression_tests/data')
                   ,},
-    scripts=['bin/same_files', 'bin/match_time_limit', 'bin/satisfy_geometry', 'bin/setup_top_file'],
+    scripts=['bin/same_files', 'bin/match_time_limit', 'bin/satisfy_geometry', 'bin/setup_top_file',
+             'bin/setup_build_file'],
     pbr=True,
     version=get_version("polyply_regression_tests/__init__.py")
 )

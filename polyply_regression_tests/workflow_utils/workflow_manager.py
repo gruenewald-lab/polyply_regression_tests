@@ -32,7 +32,6 @@ def run_process(process, current_workdir):
     start_time = time.time()
 
     command = process.split()
-    print(command)
     output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=None)
 
     end_time = time.time()
@@ -52,15 +51,17 @@ def pipe(processes):
     time_output = {}
     with tempfile.TemporaryDirectory() as tmp_dir:
         for process in processes:
+            print(process)
             try:
 	            stdout, stderr, metrics = run_process(process,
                                                       current_workdir=tmp_dir)
             except DispatchError:
                 raise OSError
 
-           #with open("_time_statistic.dat", "w") as _file:
-           #    for metric, time in metrics.items():
-           #        _file.write("{} {:3.6f}\n".format(metric, time))
+            command = process.split()[1]
+            with open(command + "_time_statistic.dat", "w") as _file:
+                for metric, time in metrics.items():
+                    _file.write("{} {:3.6f}\n".format(metric, time))
 
     return 0
 

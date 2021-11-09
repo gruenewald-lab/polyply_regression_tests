@@ -1,33 +1,35 @@
 #!/bin/python3
-
 import argparse
 import logging
 from pathlib import Path
-from vermouth.log_helpers import (StyleAdapter, BipolarFormatter,
-                                  CountingHandler, TypeAdapter,)
 
-from polyply_regression_tests.workflow_utils.read_time_file import read_time_file
-
-COMPARERS = {'.itp': compare_itp,
-             '.pdb': compare_pdb}
+def read_time_file(lines):
+    times = {}
+    for line in lines:
+        time_type, time = line.strip().split()
+        times[time_type] = float(time)
+    return times
 
 def main():
     """
-    Compare two files and see if their content is practically
-    the same. Note it currently supports PDB files and itp
-    files.
+    Check if a process fulfills a given time limit.
     """
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
-    parser.add_argument('-limit', type=float, dest="limit")
+    parser.add_argument('-f', type=Path, dest="time_file")
     parser.add_argument('-type', type=str, dest="time_type")
-    parser.add_argument('-file', type=Path, dest="reffile")
+    parser.add_argument('-lf', type=Path, dest="ref_file")
 
     args = parser.parse_args()
     with open(args.time_file, "r") as _file:
         lines = _file.readlines()
     time_dict = read_time_file(lines)
-    assert time_dict[args.time_type] < limit
+
+    with open(args.ref_file, "r") as _file:
+        lines = _file.readlines()
+    ref_time_dict = read_time_file(lines)
+
+    return ref_time_dict[args.time_type] < time_dict[args.time_type]
 
 if __name__ == '__main__':
     main()

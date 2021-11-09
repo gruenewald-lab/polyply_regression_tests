@@ -8,7 +8,7 @@ from polyply_regression_tests.workflow_utils.workflow_manager import WorkflowMan
 @pytest.mark.parametrize("test_file",(
         "template.yml",
         "restraints.yml",
-#       YML_PATH/"ring_test.yml",
+        "performance.yml",
 #       YML_PATH/"template_test.yml",
         ))
 def test_regression(test_file):

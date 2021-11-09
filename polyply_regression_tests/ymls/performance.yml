@@ -1,0 +1,30 @@
+name: test_performance
+data_path: test_performance
+tier: 2
+
+jobs:
+   martini3:
+
+       strategy:
+           monomers: [50, 100, 250, 500]
+           molecules: [100]
+           polymers: ["PEO", "PS", "PMMA"]
+
+       steps:
+            run1: polyply gen_params -seq {polymers}:{monomers} -o test.itp -name test -lib martini3
+            run2: setup_top_file -o test.top -ff-dir martini3 -ff-file martini_v3.0.0.itp -itps test.itp -mols test:{molecules}
+            run3: polyply gen_coords -o test.gro -p test.top -name test -dens 1000
+            run4: match_time_limit -lf {data_path}/martini_{monomers}_{molecules}.dat -f gen_coords_time_statistic.dat -type wall_time
+
+   2016H66:
+
+       strategy:
+           monomers: [50, 100, 250]
+           molecules: [100]
+           polymers: ["PEO", "PS", "PMMA"]
+
+       steps:
+            run1: polyply gen_params -seq {polymers}:{monomers} -o test.itp -name test -lib 2016H66
+            run2: setup_top_file -o test.top -ff-dir 2016H66.ff -ff-file forcefield.itp -itps "test.itp" -mols test:{molecules}
+            run3: polyply gen_coords -o test.gro -p test.top -name test -dens 1000
+            run4: match_time_limit -lf {data_path}/2016H66_{monomers}_{molecules}.dat -f gen_coords_time_statistic.dat -type wall_time

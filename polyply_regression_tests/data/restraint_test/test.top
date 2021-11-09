@@ -1,7 +1,9 @@
 #include "/coarse/fabian/current-projects/polymer_itp_builder/polyply_regression_tests/polyply_regression_tests/data/force_fields/martini3/martini_v3.0.0.itp"
 #include "test.itp"
+#include "NA.itp"
 
 [ system ]
 test 
 [ molecules ]
 test 1
+NA 200

@@ -1,0 +1,7 @@
+[moleculetype]
+; molname 	nrexcl
+   NA 		1
+
+[atoms]
+;id 	type 	resnr 	residu 	atom 	cgnr 	charge
+ 1 	TQ5 	1 	ION 	NA 	1 	1.0 

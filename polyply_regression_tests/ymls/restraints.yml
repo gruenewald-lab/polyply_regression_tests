@@ -51,3 +51,11 @@ jobs:
              run1: polyply gen_params -seq PEO:{monomers} -o test.itp -name test -lib martini3
              run2: setup_top_file -o test.top -ff-dir martini3 -ff-file martini_v3.0.0.itp -itps "test.itp" -mols test:1
              run3: polyply gen_coords -o test.gro -p test.top -name test -back_fudge 1 -box 10 10 10 -cycles test
+
+    ligated_cycle:
+        strategy:
+            monomers: [10, 100]
+        steps:
+             run1: polyply gen_params -seq PEO:{monomers} -o test.itp -name test -lib martini3
+             run2: setup_top_file -o test.top -ff-dir martini3 -ff-file martini_v3.0.0.itp -itps "test.itp" {data_path}/NA.itp -mols test:1 NA:{monomers}
+             run3: polyply gen_coords -o test.gro -p test.top -name test -back_fudge 1 -box 10 10 10 -cycles test -lig test:NA

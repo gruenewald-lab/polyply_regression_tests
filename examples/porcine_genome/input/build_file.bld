@@ -1,0 +1,9 @@
+[ molecule ]
+; molname
+csDNA 60 61
+[ sphere ]
+; resname start stop  inside-out  x  y  z    r
+DA     0    3000    in         11.814 11.814 11.814  7
+DG     0    3000    in         11.814 11.814 11.814  7
+DT     0    3000    in         11.814 11.814 11.814  7
+DC     0    3000    in         11.814 11.814 11.814  7

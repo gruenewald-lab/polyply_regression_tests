@@ -1,5 +1,5 @@
-name: test_template_generation
-data_path: template_test
+name: template_generation
+data_path: templates
 tier: 1
 
 jobs:

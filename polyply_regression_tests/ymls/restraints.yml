@@ -1,5 +1,5 @@
-name: test_restraints
-data_path: restraint_test
+name: restraints
+data_path: restraints
 tier: 1
 
 jobs:

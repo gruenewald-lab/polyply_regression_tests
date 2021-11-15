@@ -1,0 +1,4 @@
+[ molecule ]
+test 0 1
+[ distance_restraints ]
+50 109 1.0

@@ -1,5 +1,5 @@
-name: test_performance
-data_path: test_performance
+name: performance
+data_path: performance
 tier: 2
 
 jobs:

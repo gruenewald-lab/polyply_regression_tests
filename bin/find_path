@@ -1,0 +1,28 @@
+import os
+import argparse
+import logging
+from pathlib import Path
+from polyply_regression_tests import FF_PATH, DATA_PATH
+import polyply_regression_tests
+
+def main():
+    """
+    Find and return specific paths associated with polyply regression tests.
+    """
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,)
+    parser.add_argument('-p', type=str, dest="p", help="choice of FF, DATA, BASE")
+    args = parser.parse_args()
+
+    base_dir = polyply_regression_tests.__path__[0]
+
+    if args.p == "BASE":
+        print(base_dir)
+    elif args.p == "DATA":
+        data_dir = os.path.join(base_dir, DATA_PATH)
+        print(data_dir)
+    else:
+        ff_dir = os.path.join(base_dir, FF_PATH)
+        print(ff_dir)
+
+if __name__ == '__main__':
+    main()

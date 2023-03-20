@@ -1,7 +1,6 @@
+#!/bin/python3
 import os
 import argparse
-import logging
-from pathlib import Path
 from polyply_regression_tests import FF_PATH, DATA_PATH
 import polyply_regression_tests
 

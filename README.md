@@ -19,4 +19,4 @@ folder. Make sure the test suceeds.
 
 
 ## Binder Launch
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/marrink-lab/polyply_regression_tests/main?labpath=https%3A%2F%2Fgithub.com%2Fmarrink-lab%2Fpolyply_regression_tests%2Fblob%2Fmain%2Fexamples%2Fliquid_liquid_phase_separation%2FPolyplyTutorial.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/marrink-lab/polyply_regression_tests/main)
